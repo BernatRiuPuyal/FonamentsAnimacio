@@ -8,9 +8,6 @@ public class mirrorMovement : MonoBehaviour
 	
 	void Update ()
     {
-        
         transform.localRotation = original.transform.localRotation;
-
-       
     }
 }

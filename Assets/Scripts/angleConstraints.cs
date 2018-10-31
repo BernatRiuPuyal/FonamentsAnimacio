@@ -15,44 +15,22 @@ public class angleConstraints : MonoBehaviour
     public Transform parent;
     public Transform child;
 
-
-
     void Start()
     {
     }
 
-    void LateUpdate()
+    void Update()
     {
-        
-
         if (active)
         {
-            //solve your exercise here
-            //Debug.Log(Vector3.Angle(parent.up, child.up));
-            if(Vector3.Angle(parent.up,child.up) > maxAngle)
-            {
-                Vector3 axis;
-                float angle;
-
-                Quaternion diference = Quaternion.Inverse(parent.rotation) * child.rotation;
-
-                diference.ToAngleAxis(out angle, out axis);
-
-                child.rotation = parent.rotation;
-
-                child.Rotate(axis ,maxAngle);
-
-
-            }
-
-
-
+            
+            
         }
     }
 
-    //add auxiliary functions, if needed, below
-
-
-
-
+    private float ComputeAngle(Vector3 ToParent, Vector3 ToChild)
+    {
+       
+        return 0.0f;
+    }
 }
