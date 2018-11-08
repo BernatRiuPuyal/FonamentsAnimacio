@@ -14,12 +14,30 @@ public class planeConstraints : MonoBehaviour
  
     // To define how "strict" we want to be
     private float threshold = 0.00001f;
- 
-    void LateUpdate()
-    {
-           
-         
 
+
+ 
+
+    void Update()
+    {
+
+        if (active)
+        {
+            if (debugLines)
+            {
+                Debug.DrawRay(child.position, parent.up - plane.up * Vector3.Dot(parent.up, plane.up),Color.red);
+                
+            }
+
+
+
+            child.up = parent.up - plane.up*Vector3.Dot(parent.up,plane.up);
+
+
+
+
+
+        }
     }
 
     
