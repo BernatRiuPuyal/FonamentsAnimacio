@@ -26,11 +26,13 @@ public class RoboticArmControl : MonoBehaviour {
     private Quaternion Rot4;
 
 
-
+    public Vector3[] axis;
 
 
     // Use this for initialization
     void Start () {
+
+        axis = new Vector3[5] { Vector3.up, Vector3.right, Vector3.right, Vector3.right, Vector3.up };
 
         //lerpC = 0;
                                                                       
