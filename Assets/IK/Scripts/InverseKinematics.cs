@@ -40,6 +40,7 @@ namespace ENTICourse.IK
 
         [ReadOnly]
         public RobotJoint[] Joints = null;
+
         // The current angles
         [ReadOnly]
         public float[] Solution = null;
@@ -84,7 +85,13 @@ namespace ENTICourse.IK
             ErrorFunction = DistanceFromTarget;
 
 
-            //AxisJoints = new Vector3[5]{ Vector3.up, Vector3.right, Vector3.right, Vector3.right, Vector3.up };
+            for(int i = 1; i < Solution.Length; i++)
+            {
+                Solution[i] = Joints[i].GetAngle();
+
+                i++;
+            }
+            
 
         }
 
@@ -101,8 +108,8 @@ namespace ENTICourse.IK
         void Update()
         {
             // Do we have to approach the target?
-           //TODO
-
+            //TODO
+            target = Destination.position;
            
             if (ErrorFunction(target, Solution) > StopThreshold)
                 ApproachTarget(target);
@@ -112,11 +119,27 @@ namespace ENTICourse.IK
                 Debug.DrawLine(Effector.transform.position, target, Color.green);
                 Debug.DrawLine(Destination.transform.position, target, new Color(0, 0.5f, 0));
             }
+
+            //Debug.Log(target);
         }
 
         public void ApproachTarget(Vector3 target)
         {
             //TODO
+
+
+            for(int i = 0; i < Solution.Length - 1; i++)
+            {
+                Solution[i] -= CalculateGradient(target, Solution, i, DeltaGradient) * LearningRate;
+
+            }
+
+            for (int i = 0; i < Solution.Length - 1; i++)
+            {
+                Joints[i].MoveArm(Solution[i]);
+
+            }
+            
 
            
         }
@@ -124,17 +147,19 @@ namespace ENTICourse.IK
         
         public float CalculateGradient(Vector3 target, float[] Solution, int i, float delta)
         {
-            //TODO 
+
+            // my  code
+
             float gradient = 0;
 
                                  
-            gradient = DistanceFromTarget(target, Solution);
+            gradient = -DistanceFromTarget(target, Solution);
 
             float[] nextSol = Solution;
             nextSol[i] += delta;
 
 
-            gradient -= DistanceFromTarget(target, nextSol);
+            gradient += DistanceFromTarget(target, nextSol);
                        
 
             return gradient;
