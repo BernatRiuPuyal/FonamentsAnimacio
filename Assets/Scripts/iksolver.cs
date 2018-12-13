@@ -58,30 +58,35 @@ public class iksolver : MonoBehaviour {
 				{
                     // The vector from the ith joint to the end effector
                     Vector3 r1 = joints[joints.Length - 1].transform.position - joints[i].transform.position;
-                    r1.Normalize();
+                    //r1.Normalize();
+
                     // The vector from the ith joint to the target
                     Vector3 r2 = targ.transform.position - joints[i].transform.position;
-                    r2.Normalize();
+
+                    //r2.Normalize();
+
                     // to avoid dividing by tiny numbers
                      if (r1.magnitude * r2.magnitude <= 0.001f)
 					{
                         // cos ? sin? 
-                        _sin[i] = Mathf.Sin(Vector3.Angle(r1, r2));
-                        _cos[i] = Mathf.Sin(Vector3.Angle(r1, r2));
+                        _sin[i] = 0; //Mathf.Sin(Vector3.Angle(r1, r2));
+                        _cos[i] = 1; // Mathf.Sin(Vector3.Angle(r1, r2));
 
                     }
                     else
 					{
-						// find the components using dot and cross product
-						//TODO4
+                        // find the components using dot and cross product
+                        //TODO4
+                        _cos[i] = Vector3.Dot(r1.normalized, r2.normalized);
+                        _sin[i] = Vector3.Cross(r1.normalized, r2.normalized).magnitude;
 
 					}
 
                     // The axis of rotation 
-                    Vector3 axis = Vector3.Cross(r1,r2).normalized;
+                    Vector3 axis = Vector3.Cross(r1.normalized,r2.normalized);
 
                     // find the angle between r1 and r2 (and clamp values if needed avoid errors)
-                    _theta[i] = Vector3.Angle(r1,r2);
+                    _theta[i] = Mathf.Acos(Mathf.Max(-1, Mathf.Min(1, _cos[i])));
 
                     //Optional. correct angles if needed, depending on angles invert angle if sin component is negative
                     //if (TODO)
@@ -91,10 +96,9 @@ public class iksolver : MonoBehaviour {
 
                     // obtain an angle value between -pi and pi, and then convert to degrees (B: already in degrees!)
 
-                    if (_theta[i] > 180)
-                        _theta[i] -= 180 * 2;
+                    _theta[i] = (float)SimpleAngle(_theta[i]) * Mathf.Rad2Deg;
 
-                    Debug.Log(_theta[i]);
+                    //Debug.Log(_theta[i]);
                     //_theta[i] *= Mathf.Rad2Deg;
 
                     // rotate the ith joint along the axis by theta degrees in the world space.
@@ -109,6 +113,10 @@ public class iksolver : MonoBehaviour {
 
         // find the difference in the positions of the end effector and the target
         float difference = Vector3.Distance(targ.transform.position, joints[joints.Length - 1].transform.position);
+
+
+
+
 		
 		// if target is within reach (within epsilon) then the process is done
 		if (difference < _epsilon)
@@ -133,11 +141,20 @@ public class iksolver : MonoBehaviour {
 
 	}
 
-    /*
+    
 	// function to convert an angle to its simplest form (between -pi to pi radians)
 	double SimpleAngle(double theta)
 	{
-		theta = TODO
+
+        theta = theta % (2.0 * Mathf.PI);
+        if(theta < -Mathf.PI)
+        {
+            theta += 2 * Mathf.PI;
+        }
+        else if(theta > Mathf.PI){
+
+            theta -= 2.0 * Mathf.PI;
+        }
 		return theta;
-	}*/
+	}
 }
